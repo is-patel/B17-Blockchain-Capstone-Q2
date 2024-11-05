@@ -6,7 +6,7 @@ DSC180 Final Project - Blockchain Property platform
 ### Step 0: Entering Enviornment
 
 ```sh
-cd .\localtestnet2\
+cd localtestnet2
 ```
 
 ### Step 1: Installing Dependencies
@@ -23,7 +23,7 @@ npx hardhat compile
 
 ### Step 3: Open Ganache LocalTestNet
 
-(ensure port 8545 (else change url port in hardhat.config.ts file to port which shows up after running following command))
+(ensure port 8545 is open (else change url port in hardhat.config.ts file to port which shows up after running following command))
 
 ```sh
 npx ganache --wallet.seed 1234
