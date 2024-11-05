@@ -41,7 +41,7 @@ npx hardhat run scripts/deploy.ts --network ganache
 
 One should see both feedback that the contract has been deployed in the second terminal as well as the contract preserved on the testnet in the ganache testnet terminal
 
-## Realestate Smart Contract Unit Tests
+## Real Estate Smart Contract Unit Tests
 
 ### Prerequisites
 
@@ -52,13 +52,13 @@ To run this project, ensure you have the following dependencies installed:
 - **Hardhat** - Ethereum development environment
 - **Ethers.js** - Library to interact with the Ethereum blockchain
 
-### Step 0: Entering Enviornment
+### Step 0: Entering Environment
 
 ```sh
 cd real-estate-contract
 ```
 
-### Step 1: Running the Code
+### Step 1: Running/Testing the Code
 ```sh
 npx hardhat test
 ```
