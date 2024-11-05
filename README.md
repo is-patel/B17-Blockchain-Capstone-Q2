@@ -43,10 +43,24 @@ One should see both feedback that the contract has been deployed in the second t
 
 ## Realestate Smart Contract Unit Tests
 
+### Prerequisites
+
+To run this project, ensure you have the following dependencies installed:
+
+- **Node.js** (v14 or higher)
+- **npm**
+- **Hardhat** - Ethereum development environment
+- **Ethers.js** - Library to interact with the Ethereum blockchain
+
 ### Step 0: Entering Enviornment
 
 ```sh
 cd real-estate-contract
+```
+
+### Step 1: Running the Code
+```sh
+npx hardhat test
 ```
 
 ## Frontend Replication
