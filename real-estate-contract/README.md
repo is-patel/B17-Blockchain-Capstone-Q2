@@ -16,6 +16,7 @@ To run this project, ensure you have the following dependencies installed:
 Install npm:
 ```bash
 npm install
+```
 
 Install Hardhat and Ethers.js:
 ```bash
