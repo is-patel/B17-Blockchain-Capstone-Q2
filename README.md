@@ -48,10 +48,11 @@ One should see both feedback that the contract has been deployed in the second t
 To run this project, ensure you have the following dependencies installed:
 
 - **Node.js** (v14 or higher)
+Check their website
+- **npm**
 ```sh
 npm install
 ```
-- **npm**
 - **Hardhat** - Ethereum development environment
 - **Ethers.js** - Library to interact with the Ethereum blockchain
 
