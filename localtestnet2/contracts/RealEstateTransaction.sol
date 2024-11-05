@@ -5,6 +5,8 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 contract RealEstateTransaction is Ownable, ReentrancyGuard {
+    constructor() Ownable(msg.sender) {
+    }
     enum Role { Buyer, Seller, Agent, Lender }
 
     struct Participant {
@@ -25,6 +27,7 @@ contract RealEstateTransaction is Ownable, ReentrancyGuard {
         address payable buyer;
         uint256 offerPrice;
         bool isAccepted;
+        bool escrowInitiated;
     }
 
     struct Escrow {
@@ -45,12 +48,8 @@ contract RealEstateTransaction is Ownable, ReentrancyGuard {
     event PropertyListed(uint256 propertyId, address owner, uint256 price);
     event OfferMade(uint256 propertyId, address buyer, uint256 offerPrice);
     event OfferAccepted(uint256 propertyId, address buyer, uint256 offerPrice);
+    event EscrowInitiated(uint256 propertyId, address buyer, uint256 amount);
     event FundsReleased(uint256 propertyId, uint256 amount);
-
-    // Constructor that calls Ownable's constructor
-    constructor() Ownable() {
-        // Any additional initialization can be done here
-    }
 
     function register(Role _role) public {
         participants[msg.sender] = Participant(payable(msg.sender), _role);
@@ -82,6 +81,7 @@ contract RealEstateTransaction is Ownable, ReentrancyGuard {
             _propertyId,
             payable(msg.sender),
             msg.value,
+            false,
             false
         ));
 
@@ -110,15 +110,42 @@ contract RealEstateTransaction is Ownable, ReentrancyGuard {
         emit OfferAccepted(_propertyId, offer.buyer, offer.offerPrice);
     }
 
-    function releaseFunds(uint256 _propertyId) public {
+    function initiateEscrow(uint256 _propertyId, uint256 _offerIndex) public nonReentrant {
+        Offer storage offer = offers[_propertyId][_offerIndex];
+        Property storage property = properties[_propertyId];
+
+        require(offer.isAccepted, "Offer not accepted");
+        require(!offer.escrowInitiated, "Escrow already initiated");
+        require(msg.sender == offer.buyer, "Only the buyer can initiate escrow");
+
+        // Transfer funds to the contract to hold in escrow
+        // The funds were already sent during makeOffer and are held in the contract
+
+        // Create the escrow
+        escrows[_propertyId] = Escrow(
+            _propertyId,
+            offer.buyer,
+            property.owner,
+            offer.offerPrice,
+            false
+        );
+
+        offer.escrowInitiated = true;
+
+        emit EscrowInitiated(_propertyId, offer.buyer, offer.offerPrice);
+    }
+
+    // Function to release funds from escrow
+    function releaseFunds(uint256 _propertyId) public nonReentrant {
         Escrow storage escrow = escrows[_propertyId];
         Property storage property = properties[_propertyId];
 
-        require(!escrow.fundsReleased, "Funds already released");
+        require(escrow.fundsReleased == false, "Funds already released");
         require(
             msg.sender == escrow.buyer || msg.sender == escrow.seller,
             "Only buyer or seller can release funds"
         );
+        require(escrow.amount > 0, "Escrow not funded");
 
         // Placeholder for additional checks (e.g., title verification)
 
@@ -131,5 +158,10 @@ contract RealEstateTransaction is Ownable, ReentrancyGuard {
         property.isListed = false;
 
         emit FundsReleased(_propertyId, escrow.amount);
+    }
+
+    // Function to retrieve contract's balance (for debugging purposes)
+    function getContractBalance() public view returns (uint256) {
+        return address(this).balance;
     }
 }
