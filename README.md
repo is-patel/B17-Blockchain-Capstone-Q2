@@ -3,7 +3,7 @@ DSC180 Final Project - Blockchain Property Platform
 
 ## Project Requirements
 
-Node v20.11.1
+Node v20+
 
 ## Functional Local TestNet Setup
 
