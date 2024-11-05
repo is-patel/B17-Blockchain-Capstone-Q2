@@ -63,6 +63,9 @@ cd real-estate-contract
 npx hardhat test
 ```
 
+### Step 2: Results
+You should be able to see which test cases passed and which ones failed, with error messages and guidance to debug the code
+
 ## Frontend Replication
 
 ### Step 0: Entering Enviroment
