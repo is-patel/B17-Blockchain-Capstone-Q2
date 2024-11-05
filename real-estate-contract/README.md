@@ -1,13 +1,24 @@
-# Sample Hardhat Project
+# RealEstateTransaction Smart Contract
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a Hardhat Ignition module that deploys that contract.
+This project implements a decentralized Real Estate Transaction system using Solidity. The smart contract allows users to register as buyers or sellers, list properties, make offers, and perform escrow-based transactions to ensure secure fund transfers upon property purchase.
 
-Try running some of the following tasks:
+## Getting Started
 
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat ignition deploy ./ignition/modules/Lock.js
-```
+### Prerequisites
+
+To run this project, ensure you have the following dependencies installed:
+
+- **Node.js** (v14 or higher)
+- **npm**
+- **Hardhat** - Ethereum development environment
+- **Ethers.js** - Library to interact with the Ethereum blockchain
+
+Install npm:
+```bash
+npm install
+
+Install Hardhat and Ethers.js:
+```bash
+npm install --save-dev hardhat ethers
+
+
