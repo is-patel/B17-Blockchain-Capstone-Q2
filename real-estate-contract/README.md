@@ -13,13 +13,8 @@ To run this project, ensure you have the following dependencies installed:
 - **Hardhat** - Ethereum development environment
 - **Ethers.js** - Library to interact with the Ethereum blockchain
 
-Install npm:
+To run the program and test it out on the test cases, run the following command in the real-estate-contract directory
 ```bash
-npm install
-```
-
-Install Hardhat and Ethers.js:
-```bash
-npm install --save-dev hardhat ethers
+npx hardhat test
 
 
