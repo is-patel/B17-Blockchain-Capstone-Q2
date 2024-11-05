@@ -1,6 +1,10 @@
 # DSC180a_ethstates
 DSC180 Final Project - Blockchain Property Platform
 
+## Project Requirements
+
+Node v20.11.1
+
 ## Functional Local TestNet Setup
 
 ### Step 0: Entering Enviornment
