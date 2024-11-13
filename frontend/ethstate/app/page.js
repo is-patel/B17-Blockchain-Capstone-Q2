@@ -1,4 +1,4 @@
-'use client';
+// 'use client';
 // import React, { useState } from 'react';
 
 // const Home = () => {
@@ -135,40 +135,195 @@
 
 // export default Home;
 
+// import { useEffect, useState } from "react";
+// import { getContract } from "../components/ui/ethereum";
+// import Lock from "../contracts/Lock.json";
+
+// export default function Home() {
+//   const [count, setCount] = useState(0);
+//   const [contract, setContract] = useState(null);
+
+//   useEffect(() => {
+//     async function initContract() {
+//       const contract = getContract(
+//         "0x433220a86126eFe2b8C98a723E73eBAd2D0CbaDc",
+//         Lock.abi,
+//         0 // Use the first account as the signer
+//       );
+//       setContract(contract);
+//       const initialCount = await contract.getCount();
+//       setCount(initialCount.toNumber());
+//     }
+//     initContract();
+//   }, []);
+
+//   async function increment() {
+//     if (!contract) return;
+//     const tx = await contract.increment();
+//     await tx.wait();
+//     const updatedCount = await contract.getCount();
+//     setCount(updatedCount.toNumber());
+//   }
+
+//   return (
+//     <div style={{ textAlign: 'center'}}>
+//       <h1>Counter: {count}</h1>
+//       <button onClick={increment}>Increment</button>
+//     </div>
+//   );
+// }
+
+'use client';
 import { useEffect, useState } from "react";
 import { getContract } from "../components/ui/ethereum";
 import Lock from "../contracts/Lock.json";
+import { Search, MapPin, Home, Filter } from "lucide-react";
 
-export default function Home() {
-  const [count, setCount] = useState(0);
+export default function DashboardHome() {
+  const [properties, setProperties] = useState([]);
   const [contract, setContract] = useState(null);
+
+  // Sample property data - in a real app, this would come from the blockchain
+  const sampleProperties = [
+    {
+      id: 1,
+      title: "Modern Downtown Condo",
+      price: "450,000",
+      location: "Downtown Miami",
+      beds: 2,
+      baths: 2,
+      sqft: "1,200",
+      available: true
+    },
+    {
+      id: 2,
+      title: "Luxury Beach Villa",
+      price: "890,000",
+      location: "Miami Beach",
+      beds: 4,
+      baths: 3,
+      sqft: "2,800",
+      available: true
+    },
+    {
+      id: 3,
+      title: "Cozy Studio Apartment",
+      price: "275,000",
+      location: "Brickell",
+      beds: 1,
+      baths: 1,
+      sqft: "650",
+      available: true
+    }
+  ];
 
   useEffect(() => {
     async function initContract() {
       const contract = getContract(
         "0x433220a86126eFe2b8C98a723E73eBAd2D0CbaDc",
         Lock.abi,
-        0 // Use the first account as the signer
+        0
       );
       setContract(contract);
-      const initialCount = await contract.getCount();
-      setCount(initialCount.toNumber());
+      setProperties(sampleProperties);
     }
     initContract();
   }, []);
 
-  async function increment() {
+  async function buyProperty(propertyId) {
     if (!contract) return;
-    const tx = await contract.increment();
-    await tx.wait();
-    const updatedCount = await contract.getCount();
-    setCount(updatedCount.toNumber());
+    try {
+      const tx = await contract.increment(); // This would be replaced with actual purchase logic
+      await tx.wait();
+      // Update property availability
+      setProperties(properties.map(p => 
+        p.id === propertyId ? {...p, available: false} : p
+      ));
+    } catch (error) {
+      console.error("Error buying property:", error);
+    }
   }
 
   return (
-    <div style={{ textAlign: 'center'}}>
-      <h1>Counter: {count}</h1>
-      <button onClick={increment}>Increment</button>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <Home className="h-8 w-8 text-rose-500" />
+              <h1 className="ml-2 text-xl font-semibold text-gray-900">RealEstate Chain</h1>
+            </div>
+            
+            {/* Search Bar */}
+            <div className="flex-1 max-w-2xl mx-8">
+              <div className="relative">
+                <input
+                  type="text"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  placeholder="Search for properties..."
+                />
+                <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+              </div>
+            </div>
+
+            {/* Filter Button */}
+            <button className="flex items-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+              <Filter className="h-5 w-5 mr-2" />
+              <span>Filters</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {properties.map((property) => (
+            <div key={property.id} className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+              {/* Property Image */}
+              <div className="h-48 w-full bg-gray-200 relative">
+                <img
+                  src={`/api/placeholder/400/300`}
+                  alt={property.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+
+              {/* Property Details */}
+              <div className="p-6">
+                <div className="flex justify-between items-start">
+                  <h3 className="text-lg font-semibold text-gray-900">{property.title}</h3>
+                  <p className="text-lg font-bold text-rose-600">${property.price}</p>
+                </div>
+
+                <div className="mt-2 flex items-center text-gray-500">
+                  <MapPin className="h-4 w-4 mr-1" />
+                  <p>{property.location}</p>
+                </div>
+
+                <div className="mt-4 flex justify-between text-sm text-gray-500">
+                  <span>{property.beds} beds</span>
+                  <span>{property.baths} baths</span>
+                  <span>{property.sqft} sq ft</span>
+                </div>
+
+                <button
+                  onClick={() => buyProperty(property.id)}
+                  disabled={!property.available}
+                  className={`mt-4 w-full py-2 px-4 rounded-lg text-white font-medium
+                    ${property.available 
+                      ? 'bg-rose-500 hover:bg-rose-600' 
+                      : 'bg-gray-400 cursor-not-allowed'
+                    } transition-colors duration-200`}
+                >
+                  {property.available ? 'Buy Property' : 'Sold'}
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </main>
     </div>
   );
 }
