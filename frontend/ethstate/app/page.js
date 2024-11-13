@@ -182,6 +182,8 @@ import { Search, MapPin, Home, Filter } from "lucide-react";
 export default function DashboardHome() {
   const [properties, setProperties] = useState([]);
   const [contract, setContract] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredProperties, setFilteredProperties] = useState([]);
 
   // Sample property data - in a real app, this would come from the blockchain
   const sampleProperties = [
@@ -214,6 +216,26 @@ export default function DashboardHome() {
       baths: 1,
       sqft: "650",
       available: true
+    },
+    {
+      id: 4,
+      title: "Modern Beachfront Penthouse",
+      price: "1,200,000",
+      location: "South Beach",
+      beds: 3,
+      baths: 3.5,
+      sqft: "2,100",
+      available: true
+    },
+    {
+      id: 5,
+      title: "Downtown Luxury Loft",
+      price: "550,000",
+      location: "Downtown Miami",
+      beds: 1,
+      baths: 2,
+      sqft: "1,100",
+      available: true
     }
   ];
 
@@ -226,9 +248,23 @@ export default function DashboardHome() {
       );
       setContract(contract);
       setProperties(sampleProperties);
+      setFilteredProperties(sampleProperties);
     }
     initContract();
   }, []);
+
+  // Search functionality
+  useEffect(() => {
+    const filtered = properties.filter(property => 
+      property.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      property.location.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredProperties(filtered);
+  }, [searchTerm, properties]);
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+  };
 
   async function buyProperty(propertyId) {
     if (!contract) return;
@@ -236,9 +272,15 @@ export default function DashboardHome() {
       const tx = await contract.increment(); // This would be replaced with actual purchase logic
       await tx.wait();
       // Update property availability
-      setProperties(properties.map(p => 
+      const updatedProperties = properties.map(p => 
         p.id === propertyId ? {...p, available: false} : p
-      ));
+      );
+      setProperties(updatedProperties);
+      // Update filtered properties as well
+      const updatedFiltered = filteredProperties.map(p => 
+        p.id === propertyId ? {...p, available: false} : p
+      );
+      setFilteredProperties(updatedFiltered);
     } catch (error) {
       console.error("Error buying property:", error);
     }
@@ -247,7 +289,7 @@ export default function DashboardHome() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white shadow-sm">
+      <header className="bg-white shadow-sm sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
@@ -260,8 +302,10 @@ export default function DashboardHome() {
               <div className="relative">
                 <input
                   type="text"
+                  value={searchTerm}
+                  onChange={handleSearch}
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-                  placeholder="Search for properties..."
+                  placeholder="Search by property title or location..."
                 />
                 <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
               </div>
@@ -278,8 +322,20 @@ export default function DashboardHome() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Search Results Count */}
+        <div className="mb-6">
+          <h2 className="text-lg text-gray-700">
+            {filteredProperties.length === 0 
+              ? "No properties found" 
+              : `Showing ${filteredProperties.length} ${filteredProperties.length === 1 ? 'property' : 'properties'}`
+            }
+            {searchTerm && ` for "${searchTerm}"`}
+          </h2>
+        </div>
+
+        {/* Property Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {properties.map((property) => (
+          {filteredProperties.map((property) => (
             <div key={property.id} className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
               {/* Property Image */}
               <div className="h-48 w-full bg-gray-200 relative">
@@ -323,6 +379,14 @@ export default function DashboardHome() {
             </div>
           ))}
         </div>
+
+        {/* No Results Message */}
+        {filteredProperties.length === 0 && (
+          <div className="text-center py-12">
+            <h3 className="text-lg font-medium text-gray-900">No properties found matching your search</h3>
+            <p className="mt-2 text-gray-500">Try adjusting your search terms or filters</p>
+          </div>
+        )}
       </main>
     </div>
   );
