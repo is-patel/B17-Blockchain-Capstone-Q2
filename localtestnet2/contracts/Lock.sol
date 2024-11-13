@@ -5,6 +5,7 @@ pragma solidity ^0.8.27;
 import "hardhat/console.sol";
 
 contract Lock {
+    uint256 private count;
     uint public unlockTime;
     address payable public owner;
 
@@ -18,6 +19,7 @@ contract Lock {
 
         unlockTime = _unlockTime;
         owner = payable(msg.sender);
+        count = 0;
     }
 
     function withdraw() public {
@@ -30,5 +32,13 @@ contract Lock {
         emit Withdrawal(address(this).balance, block.timestamp);
 
         owner.transfer(address(this).balance);
+    }
+
+    function increment() public {
+        count += 1;
+    }
+
+    function getCount() public view returns (uint256) {
+        return count;
     }
 }
