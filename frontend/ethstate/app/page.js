@@ -125,7 +125,7 @@ export default function DashboardHome() {
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <Home className="h-8 w-8 text-rose-500" />
-              <h1 className="ml-2 text-xl font-semibold text-gray-900">La Jolla RealEstate Chain</h1>
+              <h1 className="ml-2 text-xl font-semibold text-gray-900">PropChain</h1>
             </div>
             
             {/* Search Bar */}
