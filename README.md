@@ -102,4 +102,33 @@ npm run dev
 ### Step 3: Viewing Live App
 
 The local version of the starter Next.js App should be running on http://localhost:3000
+
+
+## Zillow Scraper 
+
+### Step 0: Entering Folder
+
+```sh
+cd scraper
+```
+
+### Step 1: Set Up Virtual Environment
+Create a python virutal environment, activate the environment, and install the necessary packaes from requirements.txt in order to run the scraper script
+
+```sh
+python -m venv venv
+source venv/Scripts/activate
+pip install -r requirements.txt
+```
+
+### Step 2: Run Scraper Script
+
+```sh
+python zillow_scrape.py
+```
+
+
+### Step 3: Results
+A local csv file called 'zillow.csv' should be generated with a few properties from the first page of zillow
+
 ****
