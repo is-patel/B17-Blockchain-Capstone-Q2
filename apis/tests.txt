@@ -1,0 +1,105 @@
+# Example addresses to use throughout the tests:
+# Admin address: 0x8f42a25c9fd394a778df02e0f56d691e4f4ddf9e
+# Buyer address 1: 0x3a4e6f7d8c9b0a1e2f3d4c5b6a7f8e9d0c1b2a3
+# Buyer address 2: 0x1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0
+
+# First, start the Flask application
+python app.py
+
+# In a new terminal, run these commands:
+
+# 1. Apply for a loan (with first buyer address)
+curl -X POST http://localhost:5000/apply_loan \
+-H "Content-Type: application/json" \
+-d '{
+    "buyer_address": "0x3a4e6f7d8c9b0a1e2f3d4c5b6a7f8e9d0c1b2a3",
+    "property_id": 123,
+    "amount": 100000,
+    "term_in_months": 12
+}'
+
+# 2. Check loan status before approval
+curl -X GET http://localhost:5000/loan_status/0x3a4e6f7d8c9b0a1e2f3d4c5b6a7f8e9d0c1b2a3
+
+# 3. Try to approve loan without admin key (should fail)
+curl -X POST http://localhost:5000/approve_loan \
+-H "Content-Type: application/json" \
+-d '{
+    "buyer_address": "0x3a4e6f7d8c9b0a1e2f3d4c5b6a7f8e9d0c1b2a3"
+}'
+
+# 4. Approve loan with admin key
+curl -X POST http://localhost:5000/approve_loan \
+-H "Content-Type: application/json" \
+-H "X-Admin-Key: 0x8f42a25c9fd394a778df02e0f56d691e4f4ddf9e" \
+-d '{
+    "buyer_address": "0x3a4e6f7d8c9b0a1e2f3d4c5b6a7f8e9d0c1b2a3"
+}'
+
+# 5. Check loan status after approval
+curl -X GET http://localhost:5000/loan_status/0x3a4e6f7d8c9b0a1e2f3d4c5b6a7f8e9d0c1b2a3
+
+# 6. Try to apply for another loan with same buyer (should fail)
+curl -X POST http://localhost:5000/apply_loan \
+-H "Content-Type: application/json" \
+-d '{
+    "buyer_address": "0x3a4e6f7d8c9b0a1e2f3d4c5b6a7f8e9d0c1b2a3",
+    "property_id": 124,
+    "amount": 200000,
+    "term_in_months": 24
+}'
+
+# 7. Repay the loan
+curl -X POST http://localhost:5000/repay_loan \
+-H "Content-Type: application/json" \
+-H "X-Admin-Key: 0x8f42a25c9fd394a778df02e0f56d691e4f4ddf9e" \
+-d '{
+    "buyer_address": "0x3a4e6f7d8c9b0a1e2f3d4c5b6a7f8e9d0c1b2a3"
+}'
+
+# 8. Check loan status after repayment
+curl -X GET http://localhost:5000/loan_status/0x3a4e6f7d8c9b0a1e2f3d4c5b6a7f8e9d0c1b2a3
+
+# Test Loan Rejection Flow:
+
+# 9. Apply for a new loan with a different buyer
+curl -X POST http://localhost:5000/apply_loan \
+-H "Content-Type: application/json" \
+-d '{
+    "buyer_address": "0x1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0",
+    "property_id": 125,
+    "amount": 150000,
+    "term_in_months": 18
+}'
+
+# 10. Reject the loan
+curl -X POST http://localhost:5000/reject_loan \
+-H "Content-Type: application/json" \
+-H "X-Admin-Key: 0x8f42a25c9fd394a778df02e0f56d691e4f4ddf9e" \
+-d '{
+    "buyer_address": "0x1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0"
+}'
+
+# 11. Check status of rejected loan
+curl -X GET http://localhost:5000/loan_status/0x1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0
+
+# Error Test Cases:
+
+# 12. Try to approve non-existent loan
+curl -X POST http://localhost:5000/approve_loan \
+-H "Content-Type: application/json" \
+-H "X-Admin-Key: 0x8f42a25c9fd394a778df02e0f56d691e4f4ddf9e" \
+-d '{
+    "buyer_address": "0x9876543210abcdef9876543210abcdef98765432"
+}'
+
+# 13. Try to apply loan with missing parameters
+curl -X POST http://localhost:5000/apply_loan \
+-H "Content-Type: application/json" \
+-d '{
+    "property_id": 126,
+    "amount": 100000
+}'
+
+# 14. Check status of non-existent loan
+curl -X GET http://localhost:5000/loan_status/0x9876543210abcdef9876543210abcdef98765432
