@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
 
     // Fetch the sender's metadata
     const sender = await client.users.getUser(senderUserId);
-    const senderCoins = sender.unsafeMetadata?.coins || 0;
+    const senderCoins = Number(sender.unsafeMetadata?.coins || 0);
 
     // Check if the sender has enough coins
     if (senderCoins < amount) {
