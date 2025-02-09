@@ -1,5 +1,6 @@
-# DSC180a_ethstates
-DSC180 Final Project - Blockchain Property Platform
+# DSC180B-PropChain
+DSC180B Final Project - PropChain: A Blockchain-Based Framework for Automated
+Property Transfers and Smart Contract Integration
 
 ## Project Requirements
 
@@ -130,5 +131,50 @@ python zillow_scrape.py
 
 ### Step 3: Results
 A local csv file called 'zillow.csv' should be generated with a few properties from the first page of zillow
+
+
+## Escrow and Bank API Server Replication
+
+### Step 0: Entering Folder
+
+```sh
+cd apis
+```
+
+## Escrow and Bank API Server Replication
+
+### Step 0: Entering Folder
+```sh
+cd apis
+```
+
+### Step 1: Running Bank API Tests
+```sh
+cd bank
+```
+
+```sh
+# First, start the Bank server
+python bank_server.py
+
+# In a new terminal window, run the bank tests
+./bank_test.sh
+```
+
+### Step 2: Running Escrow API Tests
+```sh
+# Switch to escrow folder from bank folder
+cd ../escrow
+```
+
+```sh
+# First, start the Escrow server
+python escrow_server.py
+
+# In a new terminal window, run the escrow tests
+./test_escrow.sh
+```
+### Step 3: Results
+For both test scripts, the tests will appear in the terminal, with checks for proper successful requests and proper failed requests.
 
 ****
