@@ -132,15 +132,6 @@ python zillow_scrape.py
 ### Step 3: Results
 A local csv file called 'zillow.csv' should be generated with a few properties from the first page of zillow
 
-
-## Escrow and Bank API Server Replication
-
-### Step 0: Entering Folder
-
-```sh
-cd apis
-```
-
 ## Escrow and Bank API Server Replication
 
 ### Step 0: Entering Folder
