@@ -168,4 +168,29 @@ python escrow_server.py
 ### Step 3: Results
 For both test scripts, the tests will appear in the terminal, with checks for proper successful requests and proper failed requests.
 
+## Isolated Clerk and Image Upload Interface
+
+### Step 0: Entering Enviornment
+
+```sh
+cd localtestnet2
+```
+
+### Step 1: Installing Dependencies
+
+```sh
+npm install
+```
+### Step 2: Compiling Next.js App
+
+```sh
+npm run dev
+```
+### Step 3: Viewing Live App
+
+The local version of the authentication App should be running on http://localhost:3000
+
+### Step 4: Interact With Live App
+
+On the web page there is a login/sign-up button to authentication with a Google account to unlock the rest of the features, such as image upload, and internal coin transfers.
 ****
