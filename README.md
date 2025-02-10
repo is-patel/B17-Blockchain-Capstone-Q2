@@ -173,7 +173,7 @@ For both test scripts, the tests will appear in the terminal, with checks for pr
 ### Step 0: Entering Enviornment
 
 ```sh
-cd localtestnet2
+cd googleoauth
 ```
 
 ### Step 1: Installing Dependencies
