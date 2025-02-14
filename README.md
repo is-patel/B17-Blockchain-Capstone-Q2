@@ -2,6 +2,17 @@
 DSC180B Final Project - PropChain: A Blockchain-Based Framework for Automated
 Property Transfers and Smart Contract Integration
 
+## Team and Mentor
+Mentor: Professor Rajesh Gupta
+
+Team: 
+- Dhruv Kanetkar
+- Ish Patel
+- Raghava Bandla
+
+## Live Project Link
+https://b17-blockchain-capstone-q2.vercel.app/
+
 ## Project Requirements
 
 Node v20+
