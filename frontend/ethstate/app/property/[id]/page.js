@@ -402,7 +402,11 @@ import { realProperties } from "../../components/data";
 //   );
 // }
 
+
+import { useUser, SignedIn, SignedOut } from '@clerk/nextjs';
+
 export default function PropertyReviewPage() {
+  const { user } = useUser();
   const router = useRouter();
   const params = useParams();
   const fileInputRef = useRef(null);
@@ -434,9 +438,13 @@ export default function PropertyReviewPage() {
     if (!contract || !property) return;
 
     try {
+      const reviewAuthor = user 
+        ? `${user.firstName} ${user.lastName}`.trim() 
+        : 'Anonymous';
+
       const newReviewObj = {
         id: `review-${property.reviews.length + 1}`,
-        author: 'Current User',
+        author: reviewAuthor,
         rating: newReview.rating,
         comment: newReview.comment,
         date: new Date().toISOString()
@@ -471,10 +479,49 @@ export default function PropertyReviewPage() {
     }
   };
 
-  const handleImageUpload = (e) => {
-    const files = Array.from(e.target.files);
-    const newImages = files.map(file => URL.createObjectURL(file));
-    setPropertyImages(prev => [...prev, ...newImages]);
+  const handleImageUpload = async (e) => {
+    try {
+      if (!user) {
+        console.log("No user found");
+        return;
+      }
+      
+      console.log("Starting upload with user ID:", user.id);
+      const files = Array.from(e.target.files);
+      const newImages = files.map(file => URL.createObjectURL(file));
+      setPropertyImages(prev => [...prev, ...newImages]);
+
+      for (const file of files) {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('userId', user.id);
+
+        console.log("Sending request with formData:", {
+          fileSize: file.size,
+          userId: user.id
+        });
+
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('Server response:', response.status, errorText);
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log("Upload response:", data);
+        
+        if (data.success) {
+          console.log("Coins updated to:", data.coins);
+        }
+      }
+    } catch (error) {
+      console.error('Error in handleImageUpload:', error);
+    }
   };
 
   const calculateAverageRating = () => {
