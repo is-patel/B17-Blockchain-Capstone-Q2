@@ -1,32 +1,44 @@
 'use client';
 import { useEffect, useState } from "react";
 import Link from 'next/link';
+import { supabase } from "../lib/supabase/client";
 import { getContract } from "../../components/ui/ethereum";
 import Lock from "../../contracts/Lock.json";
-import { Header } from "./Header";
-import { SearchOverlay } from "./SearchOverlay";
-import { PropertyCard } from "./PropertyCard";
-import { realProperties } from "./data";
 
 export default function DashboardHome() {
   const [properties, setProperties] = useState([]);
   const [contract, setContract] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredProperties, setFilteredProperties] = useState([]);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   useEffect(() => {
-    async function initContract() {
-      const contract = getContract(
-        "0x433220a86126eFe2b8C98a723E73eBAd2D0CbaDc",
-        Lock.abi,
-        0
-      );
-      setContract(contract);
-      setProperties(realProperties);
-      setFilteredProperties(realProperties);
+    async function initData() {
+      try {
+        // Initialize Ethereum contract
+        const contract = getContract(
+          "0x433220a86126eFe2b8C98a723E73eBAd2D0CbaDc",
+          Lock.abi,
+          0
+        );
+        setContract(contract);
+
+        // Fetch properties from Supabase
+        const { data, error } = await supabase
+          .from('properties')
+          .select(`
+            *,
+            reviews(*)
+          `);
+
+        if (error) throw error;
+
+        setProperties(data);
+        setFilteredProperties(data);
+      } catch (error) {
+        console.error("Error initializing data:", error);
+      }
     }
-    initContract();
+    initData();
   }, []);
 
   useEffect(() => {
@@ -37,24 +49,32 @@ export default function DashboardHome() {
     setFilteredProperties(filtered);
   }, [searchTerm, properties]);
 
-  useEffect(() => {
-    if (isSearchOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, [isSearchOpen]);
+  // Calculate average rating for a property
+  const calculateAverageRating = (reviews) => {
+    if (!reviews || reviews.length === 0) return 0;
+    const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
+    return (totalRating / reviews.length).toFixed(1);
+  };
 
-  const handleSearch = (e) => setSearchTerm(e.target.value);
+  // Format price 
+  const formatPrice = (price) => `$${price.replace(/,/g, ',')}`;
 
+  // Buy property function
   async function buyProperty(propertyId) {
     if (!contract) return;
     try {
       const tx = await contract.increment();
       await tx.wait();
+
+      // Update property availability in Supabase
+      const { data, error } = await supabase
+        .from('properties')
+        .update({ available: false })
+        .eq('id', propertyId);
+
+      if (error) throw error;
+
+      // Update local state
       const updatedProperties = properties.map(p =>
         p.id === propertyId ? {...p, available: false} : p
       );
@@ -65,8 +85,6 @@ export default function DashboardHome() {
     }
   }
 
-  const formatPrice = (price) => `$${price.replace(/,/g, ',')}`;
-
   return (
     <div className="bg-white min-h-screen">
       <header className="bg-white shadow-md py-4 px-6 flex justify-between items-center">
@@ -76,16 +94,10 @@ export default function DashboardHome() {
             type="text"
             placeholder="Search properties"
             value={searchTerm}
-            onChange={handleSearch}
+            onChange={(e) => setSearchTerm(e.target.value)}
             className="ml-4 px-3 py-2 border rounded-full w-96 focus:outline-none focus:ring-2 focus:ring-[#FF5A5F]"
           />
         </div>
-        {/* <nav className="flex space-x-4">
-          <a href="#" className="text-gray-700 hover:text-[#FF5A5F]">Become a host</a>
-          <a href="#" className="text-gray-700 hover:text-[#FF5A5F]">Help</a>
-          <a href="#" className="text-gray-700 hover:text-[#FF5A5F]">Sign up</a>
-          <a href="#" className="text-gray-700 hover:text-[#FF5A5F]">Log in</a>
-        </nav> */}
       </header>
 
       <main className="container mx-auto px-6 py-8">
@@ -103,7 +115,7 @@ export default function DashboardHome() {
                     title={`Property at ${property.address}`}
                     allowFullScreen
                   />
-              </div>
+                </div>
                 <div className="absolute top-4 right-4 bg-white bg-opacity-80 px-2 py-1 rounded-full text-sm font-semibold">
                   {property.available ? 'Available' : 'Sold'}
                 </div>
@@ -146,11 +158,4 @@ export default function DashboardHome() {
       </main>
     </div>
   );
-}
-
-// Helper function to calculate average rating
-function calculateAverageRating(reviews) {
-  if (!reviews || reviews.length === 0) return 0;
-  const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
-  return (totalRating / reviews.length).toFixed(1);
 }
