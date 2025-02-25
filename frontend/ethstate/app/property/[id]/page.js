@@ -5,7 +5,11 @@ import { supabase } from '../../lib/supabase/client';
 import { getContract } from "../../../components/ui/ethereum";
 import Lock from "../../../contracts/Lock.json";
 
+
+import { useUser, SignedIn, SignedOut } from '@clerk/nextjs';
+
 export default function PropertyReviewPage() {
+  const { user } = useUser();
   const router = useRouter();
   const params = useParams();
   const fileInputRef = useRef(null);
@@ -55,6 +59,18 @@ export default function PropertyReviewPage() {
     if (!property) return;
 
     try {
+      const reviewAuthor = user 
+        ? `${user.firstName} ${user.lastName}`.trim() 
+        : 'Anonymous';
+
+      const newReviewObj = {
+        id: `review-${property.reviews.length + 1}`,
+        author: reviewAuthor,
+        rating: newReview.rating,
+        comment: newReview.comment,
+        date: new Date().toISOString()
+      };
+
       // Submit review to Supabase
       const { data, error } = await supabase
         .from('reviews')
@@ -62,7 +78,7 @@ export default function PropertyReviewPage() {
           property_id: property.id,
           rating: newReview.rating,
           comment: newReview.comment,
-          author: 'Current User' // Replace with actual user authentication
+          author: reviewAuthor // Replace with actual user authentication
         })
         .select();
 
@@ -110,7 +126,10 @@ export default function PropertyReviewPage() {
   };
 
   const handleImageUpload = async (e) => {
-    if (!property) return;
+    if (!property || !user) {
+      console.log("No property or user found");
+      return;
+    }
 
     const files = Array.from(e.target.files);
     
@@ -145,8 +164,31 @@ export default function PropertyReviewPage() {
           .select();
 
         if (dbError) throw dbError;
-        return publicUrl;
 
+        // Handle API upload for rewards
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('userId', user.id);
+
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('Server response:', response.status, errorText);
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const apiData = await response.json();
+        console.log("Upload response:", apiData);
+        
+        if (apiData.success) {
+          console.log("Coins updated to:", apiData.coins);
+        }
+
+        return publicUrl;
       });
 
       const newImageUrls = await Promise.all(uploadPromises);

@@ -24,6 +24,7 @@ export const Header = ({ onOpenSearch }) => (
           <Filter className="h-5 w-5 mr-2" />
           <span>Filters</span>
         </button>
+
       </div>
     </div>
   </header>
