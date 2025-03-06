@@ -1001,6 +1001,7 @@ export default function PropertyReviewPage() {
       console.log("Placing bid, tx hash:", tx.hash);
       await tx.wait();
       console.log("Bid placed successfully!");
+      alert(`Bid of ${ethers.utils.formatUnits(bidValue, 18)} tokens by ${user.id} placed successfully!`);
     } catch (error) {
       console.error("Error placing bid:", error);
     }
