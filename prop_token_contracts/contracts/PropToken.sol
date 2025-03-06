@@ -4,44 +4,21 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
-/**
- * @title PropTokenWithRolesAndBidding
- * @notice This contract is a custodial ERC20 token that supports:
- *         - Role-based authorization (bank, escrow, property management)
- *         - Wallet registration for users
- *         - Simulated bank loans
- *         - Escrow functionality for holding tokens
- *         - Robust bidding on properties with multiple bids allowed per property.
- */
 contract PropToken is ERC20, AccessControl {
-    // -------------------------
-    //    Role Definitions
-    // -------------------------
     bytes32 public constant BANK_ROLE = keccak256("BANK_ROLE");
     bytes32 public constant ESCROW_ROLE = keccak256("ESCROW_ROLE");
     bytes32 public constant PROPERTY_MANAGER_ROLE = keccak256("PROPERTY_MANAGER_ROLE");
 
-    // -------------------------
-    //    Custodial Balances
-    // -------------------------
-    // Tracks each user's off-chain (custodial) token balance.
+    
     mapping(bytes32 => uint256) private _userBalances;
 
-    // -------------------------
-    //    Wallet Registration
-    // -------------------------
-    // Maps user identifiers to their registered wallet addresses.
+    
     mapping(bytes32 => address) public userWallets;
 
-    // -------------------------
-    //         Escrow
-    // -------------------------
-    // Allows holding tokens from a user's custodial balance.
+   
     mapping(bytes32 => uint256) private _escrowBalances;
 
-    // -------------------------
-    //      Bidding Data
-    // -------------------------
+    
     struct Bid {
         bytes32 userId;       // Identifier for the bidder
         uint256 amount;       // Bid amount (tokens locked)
@@ -49,15 +26,10 @@ contract PropToken is ERC20, AccessControl {
         bool active;          // Whether the bid is active
     }
 
-    // Each property (identified by an integer) has an array of bids.
     mapping(uint256 => Bid[]) public propertyBids;
-    // Helps track if a user has an active bid on a property.
-    // We store index+1 so that 0 means no active bid.
     mapping(uint256 => mapping(bytes32 => uint256)) public userBidIndex;
 
-    // -------------------------
-    //         Events
-    // -------------------------
+    
     event WalletRegistered(bytes32 indexed userId, address wallet);
     event LoanSimulated(bytes32 indexed userId, uint256 amount);
     event EscrowHeld(bytes32 indexed userId, uint256 amount);
@@ -67,9 +39,7 @@ contract PropToken is ERC20, AccessControl {
     event BidCanceled(bytes32 indexed userId, uint256 indexed propertyId, uint256 amount, uint256 timestamp);
     event BidFinalized(uint256 indexed propertyId, bytes32 winningUserId, uint256 winningAmount, address propertySeller);
 
-    // -------------------------
-    //         Constructor
-    // -------------------------
+    
     constructor() ERC20("PropToken", "PTKN") {
         // Grant deployer all roles.
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
@@ -77,13 +47,10 @@ contract PropToken is ERC20, AccessControl {
         _grantRole(ESCROW_ROLE, msg.sender);
         _grantRole(PROPERTY_MANAGER_ROLE, msg.sender);
 
-        // Optionally mint an initial supply to the contract (custodial tokens).
-        // _mint(address(this), 1_000_000 * 10**decimals());
+        
     }
 
-    // -------------------------
-    //    Core ERC20 Functions
-    // -------------------------
+    
     /**
      * @notice Mint tokens into the contract (to be allocated to users).
      * @dev Only accounts with DEFAULT_ADMIN_ROLE can call.
@@ -99,9 +66,7 @@ contract PropToken is ERC20, AccessControl {
         return _userBalances[userId];
     }
 
-    // -------------------------
-    //    Wallet Registration
-    // -------------------------
+    
     /**
      * @notice Allows a user to register their wallet address.
      * @dev The caller must match the wallet address being registered.
@@ -113,9 +78,7 @@ contract PropToken is ERC20, AccessControl {
         emit WalletRegistered(userId, wallet);
     }
 
-    // -------------------------
-    //    Balance Management
-    // -------------------------
+    
     /**
      * @notice Credits a user's custodial balance (e.g. for rewards).
      * @dev Only DEFAULT_ADMIN_ROLE can call.
@@ -134,9 +97,7 @@ contract PropToken is ERC20, AccessControl {
         _userBalances[userId] -= amount;
     }
 
-    // -------------------------
-    //    Bank Loan Simulation
-    // -------------------------
+    
     /**
      * @notice Credits tokens to a user's custodial balance simulating a loan.
      * @dev Only accounts with BANK_ROLE can call.
@@ -147,9 +108,7 @@ contract PropToken is ERC20, AccessControl {
         emit LoanSimulated(userId, amount);
     }
 
-    // -------------------------
-    //    Withdrawals
-    // -------------------------
+    
     /**
      * @notice Withdraws tokens from a user's custodial balance to their registered wallet.
      * @dev Only accounts with PROPERTY_MANAGER_ROLE can call.
@@ -162,9 +121,7 @@ contract PropToken is ERC20, AccessControl {
         _transfer(address(this), wallet, amount);
     }
 
-    // -------------------------
-    //         Escrow
-    // -------------------------
+    
     /**
      * @notice Holds tokens from a user's custodial balance in escrow.
      * @dev Only accounts with ESCROW_ROLE can call.
@@ -194,9 +151,7 @@ contract PropToken is ERC20, AccessControl {
         return _escrowBalances[userId];
     }
 
-    // -------------------------
-    //        Bidding
-    // -------------------------
+    
     /**
      * @notice Place or update a bid for a property.
      *         If the user already has an active bid, the new bid must be higher.
