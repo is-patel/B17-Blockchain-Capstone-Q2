@@ -13,6 +13,12 @@ Team:
 ## Live Project Link
 https://b17-blockchain-capstone-q2.vercel.app/
 
+## Project Report Website
+https://dhruvk0.github.io/propchain_project_website/
+
+## Artifact Repository
+https://github.com/DhruvK0/artifact-directory-b17
+
 ## Project Requirements
 
 Node v20+
