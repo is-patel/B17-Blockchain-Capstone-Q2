@@ -102,7 +102,7 @@ You should be able to see which test cases passed and which ones failed, with er
 
 ### Step 0: Entering Enviroment
 
-Go back up to the root folder and change directories into the ethstate project inside the frontend folder. Additionally, the starter app has also been hosted live as an alternative to self hosting: https://b17-blockchain-capstone.vercel.app/
+Go back up to the root folder and change directories into the ethstate project inside the frontend folder. Additionally, the starter app has also been hosted live as an alternative to self hosting: https://b17-blockchain-capstone-q2.vercel.app/
 
 ```sh
 cd frontend/ethstate
