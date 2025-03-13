@@ -88,20 +88,20 @@ npm install @openzeppelin/contracts
 
 In one terminal window run the following commands
 
-### Step 0: Entering Environment
+### Step 1: Entering Environment
 
 ```sh
 cd real-estate-contract
 ```
 
-### Step 1: Creating Local Network
+### Step 2: Creating Local Network
 ```sh
 npx hardhat node
 ```
 
-Once the local network is up and runnning, navigate to a new terminal window inside the $real-estate-contract$ directory
+Once the local network is up and runnning, navigate to a new terminal window inside the real-estate-contract directory
 
-### Step 2: Deploying Contract
+### Step 3: Deploying Contract
 ```sh
 npx hardhat run scripts/deploy.js --network localhost
 ```
@@ -112,20 +112,20 @@ The real estate contract is deployed now.
 
 In one terminal window run the following commands
 
-### Step 0: Entering Environment
+### Step 1: Entering Environment
 
 ```sh
 cd prop-token-contracts
 ```
 
-### Step 1: Creating Local Network
+### Step 2: Creating Local Network
 ```sh
 npx hardhat node
 ```
 
-Once the local network is up and runnning, navigate to a new terminal window inside the $prop-token-contracts$ directory
+Once the local network is up and runnning, navigate to a new terminal window inside the prop-token-contracts directory
 
-### Step 2: Deploying Contract
+### Step 3: Deploying Contract
 ```sh
 npx hardhat run scripts/deploy.js --network localhost
 ```
