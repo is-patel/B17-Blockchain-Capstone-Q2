@@ -99,7 +99,7 @@ cd real-estate-contract
 npx hardhat node
 ```
 
-Once the local network is up and runnning, navigate to a new terminal window inside the real-estate-contract directory
+Once the local network is up and runnning, navigate to a new terminal window inside the `real-estate-contract` directory
 
 ### Step 3: Deploying Contract
 ```sh
