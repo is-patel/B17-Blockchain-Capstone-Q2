@@ -123,7 +123,7 @@ cd prop-token-contracts
 npx hardhat node
 ```
 
-Once the local network is up and runnning, navigate to a new terminal window inside the prop-token-contracts directory
+Once the local network is up and runnning, navigate to a new terminal window inside the `prop-token-contracts` directory
 
 ### Step 3: Deploying Contract
 ```sh
