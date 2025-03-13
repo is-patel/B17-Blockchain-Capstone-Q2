@@ -63,7 +63,7 @@ npx hardhat run scripts/deploy.ts --network ganache
 
 One should see both feedback that the contract has been deployed in the second terminal as well as the contract preserved on the testnet in the ganache testnet terminal
 
-## Real Estate Smart Contract Unit Tests
+## Deploying Smart Contracts
 
 ### Prerequisites
 
@@ -84,19 +84,53 @@ npm install --save-dev hardhat ethers
 npm install @openzeppelin/contracts
 ```
 
-### Step 0: Entering Environment
+## Real Estate Token Contract
+
+In one terminal window run the following commands
+
+### Step 1: Entering Environment
 
 ```sh
 cd real-estate-contract
 ```
 
-### Step 1: Running/Testing the Code
+### Step 2: Creating Local Network
 ```sh
-npx hardhat test
+npx hardhat node
 ```
 
-### Step 2: Results
-You should be able to see which test cases passed and which ones failed, with error messages and guidance to debug the code
+Once the local network is up and runnning, navigate to a new terminal window inside the `real-estate-contract` directory
+
+### Step 3: Deploying Contract
+```sh
+npx hardhat run scripts/deploy.js --network localhost
+```
+
+The real estate contract is deployed now.
+
+## Prop Token Contract
+
+In one terminal window run the following commands
+
+### Step 1: Entering Environment
+
+```sh
+cd prop-token-contracts
+```
+
+### Step 2: Creating Local Network
+```sh
+npx hardhat node
+```
+
+Once the local network is up and runnning, navigate to a new terminal window inside the `prop-token-contracts` directory
+
+### Step 3: Deploying Contract
+```sh
+npx hardhat run scripts/deploy.js --network localhost
+```
+
+The prop token contract is deployed now.
 
 ## Frontend Replication
 
